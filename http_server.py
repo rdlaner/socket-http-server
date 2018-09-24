@@ -85,12 +85,15 @@ def response_path(uri):
         response_path('/a_page_that_doesnt_exist.html') -> Raises a NameError
 
     """
-    home = "./webroot"
+    # home = "./webroot"
+    home = os.path.join(os.getcwd(), "webroot")
     content = b"not implemented"
     mime_type = b"not implemented"
-    path = home + uri
+    # path = home + uri
+    path = os.path.join(home, uri.strip("/"))
 
     # Raise a NameError if the requested content is not present under webroot.
+    """
     if uri == "/":
         req_item = path
     else:
@@ -100,9 +103,10 @@ def response_path(uri):
                 break
         else:
             raise NameError(f'Invalid path: {path}')
+    """
 
     if os.path.isfile(path):
-        f_ext = "." + req_item.split(".")[-1]
+        f_ext = "." + path.split(".")[-1]
 
         try:
             mime_type = mimetypes.types_map[f_ext].encode("utf-8")
@@ -119,14 +123,15 @@ def response_path(uri):
                     if not chunk:
                         break
                     content += chunk
-    else:
+    elif os.path.exists(path):
         mime_type = b"text/plain"
         for _, dirs, files in os.walk(path):
             content = ", ".join(dirs + files).encode("utf-8")
             break
+    else:
+        raise NameError(f'Invalid path: {path}')
 
     return content, mime_type
-
 
 def server(log_buffer=sys.stderr):
     address = ('127.0.0.1', 10000)
