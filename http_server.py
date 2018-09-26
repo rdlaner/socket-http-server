@@ -85,25 +85,10 @@ def response_path(uri):
         response_path('/a_page_that_doesnt_exist.html') -> Raises a NameError
 
     """
-    # home = "./webroot"
     home = os.path.join(os.getcwd(), "webroot")
+    path = os.path.join(home, uri.strip("/"))
     content = b"not implemented"
     mime_type = b"not implemented"
-    # path = home + uri
-    path = os.path.join(home, uri.strip("/"))
-
-    # Raise a NameError if the requested content is not present under webroot.
-    """
-    if uri == "/":
-        req_item = path
-    else:
-        req_item = path.split("/")[-1]
-        for _, dirs, files in os.walk(home):
-            if req_item in dirs or req_item in files:
-                break
-        else:
-            raise NameError(f'Invalid path: {path}')
-    """
 
     if os.path.isfile(path):
         f_ext = "." + path.split(".")[-1]
